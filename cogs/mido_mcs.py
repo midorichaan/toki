@@ -66,11 +66,8 @@ class mido_mcs(commands.Cog):
     #banlist
     @utils.is_staff()
     @commands.command(name="banlist", description="Banされているプレイヤーを表示します")
-    async def _banlist(self, ctx, player: str=None):
+    async def _banlist(self, ctx):
         msg = await utils.reply_or_send(ctx, content="> 処理中...")
-
-        if not player:
-            return await msg.edit(content="> プレイヤーを指定してください")
 
         try:
             result = await self.get_all_punish()
