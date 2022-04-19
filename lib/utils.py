@@ -51,7 +51,7 @@ async def run_process(ctx, command):
 def is_staff():
     async def predicate(ctx):
         if not ctx.guild:
-            return False
+            return ctx.author.id in ctx.bot.owner_ids
         roles = [i.id for i in ctx.author.roles]
         if 965613844997226556 in roles:
             return True
