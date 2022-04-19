@@ -21,7 +21,7 @@ class mido_admins(commands.Cog):
 
     #eval
     @commands.is_owner()
-    @commands.command(name="eval", usage="eval <code>")
+    @commands.command(name="eval", usage="eval <code>", description="Pythonのコードを評価します")
     async def _eval(self, ctx, *, code: str=None):
         if not code:
             await ctx.message.add_reaction(self.failed)
@@ -66,7 +66,7 @@ class mido_admins(commands.Cog):
 
     #shell
     @commands.is_owner()
-    @commands.command(name="shell", aliases=["sh"], usage="shell <command>")
+    @commands.command(name="shell", aliases=["sh"], usage="shell <command>", description="シェルコマンドを実行します")
     async def shell(self, ctx, *, command=None):
         if not command:
             await ctx.message.add_reaction(self.failed)
@@ -81,6 +81,17 @@ class mido_admins(commands.Cog):
         try:
             await ctx.message.add_reaction(self.success)
             return await utils.reply_or_send(ctx, content=text)   
+        except Exception as exc:
+            await ctx.message.add_reaction(self.failed)
+            return await utils.reply_or_send(ctx, content=f"```py\n{exc}\n```")
+
+    #sync
+    @commands.is_owner()
+    @commands.command(name="sync", usage="sync", description="GitHub上のコードと同期します")
+    async def sync(self, ctx):
+        stdout, stderr = await utils.run_process(ctx, "sudo -g midorichan -u midorichan git pull")
+        try:
+            return await ctx.message.add_reaction(self.success)
         except Exception as exc:
             await ctx.message.add_reaction(self.failed)
             return await utils.reply_or_send(ctx, content=f"```py\n{exc}\n```")
