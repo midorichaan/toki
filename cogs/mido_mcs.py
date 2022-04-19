@@ -36,7 +36,7 @@ class mido_mcs(commands.Cog):
             db = await self.db.fetchone("SELECT * FROM Punishments WHERE uuid=%s AND punishmentType=%s", (target, type))
         return db
 
-    #banlist
+    #baninfo
     @utils.is_staff()
     @commands.command(name="baninfo", description="Banされているプレイヤーの情報を表示します")
     async def _baninfo(self, ctx, player: str=None):
@@ -61,6 +61,29 @@ class mido_mcs(commands.Cog):
             e.add_field(name="Operator", value=result["operator"])
             e.add_field(name="Duration", value="無期限" if str(result["end"]) == "-1" else str(result["end"]))
             e.add_field(name="Reason", value=f"```\n{result['reason']}\n```", inline=False)
+            return await msg.edit(content=None, embed=e)
+
+    #banlist
+    @utils.is_staff()
+    @commands.command(name="banlist", description="Banされているプレイヤーを表示します")
+    async def _banlist(self, ctx, player: str=None):
+        msg = await utils.reply_or_send(ctx, content="> 処理中...")
+
+        if not player:
+            return await msg.edit(content="> プレイヤーを指定してください")
+
+        try:
+            result = await self.get_all_punish()
+        except Exception as exc:
+            return await msg.edit(content=f"> エラー \n```py\n{exc}\n```")
+        else:
+            if not result:
+                return await msg.edit(content="> データが存在しません")
+
+            result = [i for i in result if str(i["punishmentType"]) == "BAN"]
+            e = discord.Embed(title=f"BanList", color=0xf172a3, timestamp=ctx.message.created_at)
+            for i in result:
+                e.add_field(name=f"{i['name']} ({i['uuid']})", value=f"```\n{i['reason']}\n```")
             return await msg.edit(content=None, embed=e)
 
 async def setup(bot):
