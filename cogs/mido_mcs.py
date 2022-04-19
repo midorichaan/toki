@@ -23,7 +23,7 @@ class mido_mcs(commands.Cog):
     #get_all_punish
     async def get_all_punish(self):
         result = []
-        db = await self.db.fetchall("SELECT * FROM Punishments WHERE punishmentType=`BAN`")
+        db = await self.db.fetchall("SELECT * FROM Punishments")
 
         if not db:
             return result
