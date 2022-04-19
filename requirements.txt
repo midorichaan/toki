@@ -1,0 +1,5 @@
+aiomysql
+git+https://github.com/Rapptz/discord.py
+jishaku
+psutil
+python-dotenv
