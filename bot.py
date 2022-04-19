@@ -93,10 +93,27 @@ class TokiHanasaki(commands.Bot):
             format = f"ERROR: {ctx.author} ({ctx.author.id}) -> {exc} @{ctx.channel} ({ctx.channel.id}) - {ctx.guild} ({ctx.guild.id})"
 
         self.logger.warning(format)
-        await utils.reply_or_send(
-            ctx,
-            content=f"> エラー \n```py\n{exc}\n```"
-        )
+
+        if isinstance(exc, commands.CommandNotFound):
+            await utils.reply_or_send(
+                ctx,
+                content="> そのコマンドは存在しないよ！"
+            )
+        elif isinstance(exc, commands.NotOwner):
+            await utils.reply_or_send(
+                ctx,
+                content="> Bot管理者のみが使えるよ！"
+            )
+        elif isinstance(exc, commands.CheckFailure):
+            await utils.reply_or_send(
+                ctx,
+                content="> スタッフのみが使えるよ！"
+            )
+        else:
+            await utils.reply_or_send(
+                ctx,
+                content=f"> エラー \n```py\n{exc}\n```"
+            )
 
 #get_token from environ
 def get_token(value: str) -> str:
