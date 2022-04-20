@@ -32,6 +32,7 @@ class TokiHanasaki(commands.Bot):
         self._cogs = [
             "cogs.mido_mcs", "cogs.mido_admins", "jishaku"
         ]
+        self.session = aiohttp.ClientSession(loop=self.loop)
 
     #run
     def run(self, token: str=None) -> None:
