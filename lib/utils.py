@@ -39,6 +39,23 @@ class MinecraftConverter(commands.Converter):
                     raise ValueError("UUIDの検証中にエラーが発生しました")
         return data
 
+#FetchUserConverter
+class FetchUserConverter(commands.Converter):
+    async def convert(self, ctx, argument):
+        try:
+            return await commands.MemberConverter().convert(ctx, argument)
+        except:
+            try:
+                return await commands.UserConverter().convert(ctx, argument)
+            except:
+                if argument.isdigit():
+                    try:
+                        return await ctx.bot.fetch_user(int(argument))
+                    except:
+                        return None
+                else:
+                    return None
+
 #get_status
 def get_status(member):
     status = str(member.status)
