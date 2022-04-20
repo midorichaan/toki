@@ -135,5 +135,27 @@ class mido_mcs(commands.Cog):
                     await self.db.execute("UPDATE mcids SET mcid=%s WHERE user_id=%s AND type=%s", (mcid, ctx.author.id, 2))
                     return await msg.edit(content=f"> MCIDを `{mcid}` に変更したよ！")
 
+    #mc mcid
+    @_mc.command(name="mcid", description="指定ユーザーまたは自分のMCIDを表示します")
+    async def _mcid(self, ctx, target: utils.FetchUserConverter=None):
+        msg = await utils.reply_or_send(ctx, content="> 処理中...")
+
+        if not target:
+            target = ctx.author
+
+        try:
+            db = await self.db.fetchall("SELECT * FROM mcids WHERE user_id=%s", (target.id,))
+        except:
+            return await msg.edit(content="> データベース検索中にエラーが発生しました")
+        else:
+            if not db:
+                return await msg.edit(content="> データが見つかりませんでした")
+
+            e = discord.Embed(title=f"{target} ({target.id}) のMCID", description="", color=0xf172a3, timestamp=ctx.message.created_at)
+            for i in db:
+                type = "Java" if i["type"] == 1 else "BE"
+                e.add_field(name=type, value=f"{i['mcid']} ({i.get('uuid', 'uuidなし')})")
+            return await msg.edit(content=None, embed=e)
+
 async def setup(bot):
     await bot.add_cog(mido_mcs(bot))
