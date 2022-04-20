@@ -83,5 +83,57 @@ class mido_mcs(commands.Cog):
                 e.add_field(name=f"{i['name']} ({i['uuid']})", value=f"```\n{i['reason']}\n```")
             return await msg.edit(content=None, embed=e)
 
+    #mc
+    @commands.group(name="mc", description="Minecraft関連のコマンドです")
+    async def _mc(self, ctx):
+        if ctx.invoked_subcommand is None:
+            return await utils.reply_or_send(
+                ctx,
+                content="> サブコマンドが指定されていないか、存在しないコマンドです"
+            )
+
+    #mc register
+    @_mc.command(name="register", description="MCIDを登録します")
+    async def _register(self, ctx, type: utils.MinecraftTypeConverter=None, *, mcid: str=None):
+        msg = await utils.reply_or_send(ctx, content="> 処理中...")
+
+        if not type:
+            return await msg.edit(content="> JavaかBEか指定してね！")
+        if not mcid:
+            return await msg.edit(content="> MCIDを指定してね！")
+
+        _ = None
+        if type == 1:
+            #Java Edition
+            try:
+                _ = await utils.MinecraftConverter().convert(ctx, str(mcid))
+            except:
+                return await msg.edit(content="> ユーザーが見つからなかったか、検証中にエラーが発生したよ！")
+
+            try:
+                data = await self.db.fetchone("SELECT * FROM mcids WHERE mcid=%s AND type=%s", (mcid, 1))
+            except Exception as exc:
+                return await msg.edit(content=f"> エラー \n```py\n{exc}\n```")
+            else:
+                if not data:
+                    await self.db.execute("INSERT INTO mcids VALUES(%s, %s, %s, %s)", (ctx.author.id, 1, _, mcid))
+                    return await msg.edit(content=f"> MCIDを `{mcid}` で登録したよ！")
+                else:
+                    await self.db.execute("UPDATE mcids SET mcid=%s, uuid=%s WHERE user_id=%s AND type=%s", (mcid, _, ctx.author.id, 1))
+                    return await msg.edit(content=f"> MCIDを `{mcid}` に変更したよ！")
+        elif type == 2:
+            #Bedrock Edition
+            try:
+                data = await self.db.fetchone("SELECT * FROM mcids WHERE mcid=%s AND type=%s", (mcid, 2))
+            except Exception as exc:
+                return await msg.edit(content=f"> エラー \n```py\n{exc}\n```")
+            else:
+                if not data:
+                    await self.db.execute("INSERT INTO mcids VALUES(%s, %s, %s, %s)", (ctx.author.id, 2, _, mcid))
+                    return await msg.edit(content=f"> MCIDを `{mcid}` で登録したよ！")
+                else:
+                    await self.db.execute("UPDATE mcids SET mcid=%s WHERE user_id=%s AND type=%s", (mcid, ctx.author.id, 2))
+                    return await msg.edit(content=f"> MCIDを `{mcid}` に変更したよ！")
+
 async def setup(bot):
     await bot.add_cog(mido_mcs(bot))
