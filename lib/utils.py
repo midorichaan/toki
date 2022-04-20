@@ -3,6 +3,16 @@ import subprocess
 import uuid
 from discord.ext import commands
 
+#minecraft type converter
+class MinecraftTypeConverter(commands.Converter):
+    async def convert(self, ctx, value):
+        if value.lower() in ["java", "1"]:
+            return 1
+        elif value.lower() in ["be", "bedrock", "2"]:
+            return 2
+        else:
+            return None
+
 #minecraft converter
 class MinecraftConverter(commands.Converter):
     async def convert(self, ctx, value):
