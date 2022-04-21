@@ -39,7 +39,7 @@ class mido_admins(commands.Cog):
         e.add_field(name="> __**CPU Status**__", value=f"Core: {cpucore} \nPercent: {cpuper}%")
         e.add_field(
             name="> __**Memory Status**__", 
-            value=f"Percent: {memory.percent}% \nTotal: {}convert_gb(memory.total)GB \nUsed: {convert_gb(memory.used)}GB \nFree: {convert_gb(memory.available)}GB"
+            value=f"Percent: {memory.percent}% \nTotal: {convert_gb(memory.total)}GB \nUsed: {convert_gb(memory.used)}GB \nFree: {convert_gb(memory.available)}GB"
         )
         e.add_field(
             name="> __**Swap Memory Status**__",
