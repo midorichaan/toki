@@ -34,20 +34,20 @@ class mido_admins(commands.Cog):
         disk = psutil.disk_usage(path="/")
 
         def convert_gb(v):
-            return v / 1024**2
+            return str(v /1000000000)[0:3]
 
         e.add_field(name="> __**CPU Status**__", value=f"Core: {cpucore} \nPercent: {cpuper}%")
         e.add_field(
             name="> __**Memory Status**__", 
-            value=f"Percent: {memory.percent}% \nTotal: {convert_gb(memory.total):.2f}GB \nUsed: {convert_gb(memory.used):.2f}GB \nFree: {convert_gb(memory.available):.2f}GB"
+            value=f"Percent: {memory.percent}% \nTotal: {convert_gb(memory.total)}GB \nUsed: {convert_gb(memory.used)}GB \nFree: {convert_gb(memory.available)}GB"
         )
         e.add_field(
             name="> __**Swap Memory Status**__",
-            value=f"Percent: {swapmemory.percent}% \nTotal: {convert_gb(swapmemory.total):.2f}GB \nUsed: {convert_gb(swapmemory.used):.2f}GB \nFree: {convert_gb(swapmemory.free):.2f}GB"
+            value=f"Percent: {swapmemory.percent}% \nTotal: {convert_gb(swapmemory.total)}GB \nUsed: {convert_gb(swapmemory.used)}GB \nFree: {convert_gb(swapmemory.free)}GB"
         )
         e.add_field(
             name="> __**Disk Status**__",
-            value=f"Percent: {disk.percent}% \nTotal: {convert_gb(disk.total):.2f}GB \nUsed: {convert_gb(disk.used):.2f}GB \nFree: {convert_gb(disk.free):.2f}GB"
+            value=f"Percent: {disk.percent}% \nTotal: {convert_gb(disk.total)}GB \nUsed: {convert_gb(disk.used)}GB \nFree: {convert_gb(disk.free)}GB"
         )
         return await msg.edit(content=None, embed=e)
 
