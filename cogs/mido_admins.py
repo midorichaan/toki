@@ -35,7 +35,7 @@ class mido_admins(commands.Cog):
         text = f"""
         > __**CPU Status**__
           Core(s): {cpucore}
-          Percent: {cpu}%
+          Percent: {cpuper}%
 
         > __**Memory Status**__
           Percent: {memory.percent}%
