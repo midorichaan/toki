@@ -4,9 +4,10 @@ from discord.ext import commands
 import asyncio
 import io
 import os
+import psutil
+import sys
 import textwrap
 import traceback
-import sys
 from contextlib import redirect_stdout
 
 from lib import utils
@@ -18,6 +19,44 @@ class mido_admins(commands.Cog):
         self._ = None
         self.success = "✅"
         self.failed = "❌"
+
+    #status
+    @utils.is_staff()
+    @commands.command(name="status", description="サーバーのステータスを表示します")
+    async def _status(self, ctx):
+        msg = await utils.reply_or_send(ctx, content="> 処理中...")
+        e = discord.Embed(title="VPS Status", description="", color=0xf172a1, timestamp=ctx.message.created_at)
+
+        memory = psutil.virtual_memory()
+        cpuper = psutil.cpu_percent()
+        cpucore = psutil.cpu_count(logical=False)
+        swapmemory = psutil.swap_memory()
+        disk = psutil.disk_usage(path="/")
+        text = f"""
+        > __**CPU Status**__
+          Core(s): {cpucore}
+          Percent: {cpu}%
+
+        > __**Memory Status**__
+          Percent: {memory.percent}%
+          Total: {memory.total / (1024.0 ** 3)}GB
+          Used: {memory.used / (1024.0 ** 3)}GB
+          Free: {memory.available / (1024.0 ** 3)}GB
+        
+        > __**Swap Memory Status**__
+          Percent: {swapmemory.percent}%
+          Total: {swapmemory.total / (1024.0 ** 3)}GB
+          Used: {swapmemory.used / (1024.0 ** 3)}GB
+          Free:: {swapmemory.free / (1024.0 ** 3)}GB
+        
+        > __**Disk Status**__
+          Percent: {disk.percent}%
+          Total: {disk.total / (1024.0 ** 3)}GB
+          Used: {disk.used / (1024.0 ** 3)}GB
+          Free: {disk.free / (1024.0 ** 3)}GB
+        """
+        e.description = text
+        return await msg.edit(content=None, embed=e)
 
     #eval
     @commands.is_owner()
