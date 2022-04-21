@@ -25,37 +25,30 @@ class mido_admins(commands.Cog):
     @commands.command(name="status", description="サーバーのステータスを表示します")
     async def _status(self, ctx):
         msg = await utils.reply_or_send(ctx, content="> 処理中...")
-        e = discord.Embed(title="VPS Status", description="", color=0xf172a1, timestamp=ctx.message.created_at)
+        e = discord.Embed(title="VPS Status", color=0xf172a1, timestamp=ctx.message.created_at)
 
         memory = psutil.virtual_memory()
         cpuper = psutil.cpu_percent()
         cpucore = psutil.cpu_count(logical=False)
         swapmemory = psutil.swap_memory()
         disk = psutil.disk_usage(path="/")
-        text = f"""
-        > __**CPU Status**__
-          Core(s): {cpucore}
-          Percent: {cpuper}%
 
-        > __**Memory Status**__
-          Percent: {memory.percent}%
-          Total: {memory.total / (1024.0 ** 3)}GB
-          Used: {memory.used / (1024.0 ** 3)}GB
-          Free: {memory.available / (1024.0 ** 3)}GB
-        
-        > __**Swap Memory Status**__
-          Percent: {swapmemory.percent}%
-          Total: {swapmemory.total / (1024.0 ** 3)}GB
-          Used: {swapmemory.used / (1024.0 ** 3)}GB
-          Free:: {swapmemory.free / (1024.0 ** 3)}GB
-        
-        > __**Disk Status**__
-          Percent: {disk.percent}%
-          Total: {disk.total / (1024.0 ** 3)}GB
-          Used: {disk.used / (1024.0 ** 3)}GB
-          Free: {disk.free / (1024.0 ** 3)}GB
-        """
-        e.description = text
+        def convert_gb(v):
+            return v / 1024 * 1024 * 1024
+
+        e.add_field(name="> __**CPU Status**__", value=f"Core: {cpucore} \nPercent: {cpuper}%")
+        e.add_field(
+            name="> __**Memory Status**__", 
+            value=f"Percent: {memory.percent}% \nTotal: {}convert_gb(memory.total)GB \nUsed: {convert_gb(memory.used)}GB \nFree: {convert_gb(memory.available)}GB"
+        )
+        e.add_field(
+            name="> __**Swap Memory Status**__",
+            value=f"Percent: {swapmemory.percent}% \nTotal: {convert_gb(swapmemory.total)}GB \nUsed: {convert_gb(swapmemory.used)}GB \nFree: {convert_gb(swapmemory.free)}GB"
+        )
+        e.add_field(
+            name="> __**Disk Status**__",
+            value=f"Percent: {disk.percent}% \nTotal: {convert_gb(disk.total)}GB \nUsed: {convert_gb(disk.used)}GB \nFree: {convert_gb(disk.free)}GB"
+        )
         return await msg.edit(content=None, embed=e)
 
     #eval
