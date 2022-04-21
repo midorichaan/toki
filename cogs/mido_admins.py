@@ -34,7 +34,7 @@ class mido_admins(commands.Cog):
         disk = psutil.disk_usage(path="/")
 
         def convert_gb(v):
-            return v / 1024 * 1024 * 1024
+            return v / 1024**2
 
         e.add_field(name="> __**CPU Status**__", value=f"Core: {cpucore} \nPercent: {cpuper}%")
         e.add_field(
