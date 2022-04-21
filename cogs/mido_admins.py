@@ -90,11 +90,17 @@ class mido_admins(commands.Cog):
     @commands.command(name="sync", usage="sync", description="GitHub上のコードと同期します")
     async def sync(self, ctx):
         stdout, stderr = await utils.run_process(ctx, "sudo -g midorichan -u midorichan git pull")
+        if stderr:
+            text = f"```\nstdout: \n{stdout} \n\nstderr: \n{stderr}\n```"
+        else:
+            text = f"```\nstdout: \n{stdout} \n\nstderr: \nnone\n```"
+
         try:
+            await utils.reply_or_send(ctx, content=text)
             return await ctx.message.add_reaction(self.success)
         except Exception as exc:
             await ctx.message.add_reaction(self.failed)
-            return await utils.reply_or_send(ctx, content=f"```py\n{exc}\n```")
+            return await utils.reply_or_send(ctx, content=text)
 
 async def setup(bot):
     await bot.add_cog(mido_admins(bot))
