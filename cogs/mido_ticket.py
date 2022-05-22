@@ -17,5 +17,5 @@ class mido_ticket(commands.Cog):
     async def _ticket(self, ctx):
         pass
 
-def setup(bot):
-    bot.add_cog(mido_ticket(bot))
+async def setup(bot):
+    await bot.add_cog(mido_ticket(bot))
