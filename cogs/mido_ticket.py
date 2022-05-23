@@ -12,7 +12,7 @@ class mido_ticket(commands.Cog):
     #ticket
     @commands.group(
         name="ticket",
-        description="チケット関連のコマンドです"
+        description="チケット関連のコマンドです",
         usage="ticket [args]"
     )
     async def _ticket(self, ctx):
@@ -22,7 +22,7 @@ class mido_ticket(commands.Cog):
     #ticket help
     @_ticket.command(
         name="help",
-        description="チケットのヘルプを表示するよ！"
+        description="チケットのヘルプを表示するよ！",
         usage="ticket help [command]"
     )
     async def _help(self, ctx, command: str=None):
