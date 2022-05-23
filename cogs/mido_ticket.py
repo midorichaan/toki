@@ -29,8 +29,8 @@ class mido_ticket(commands.Cog):
         m = await utils.reply_or_send(ctx, content="> 処理中...")
         e = discord.Embed(title="Ticket Help", timestamp=ctx.message.created_at)
 
+        ticket = self.bot.get_command("ticket")
         if command:
-            ticket = self.bot.get_command("ticket")
             cmd = ticket.get_command(command)
             if cmd:
                 e.title = f"Ticket help - {command}"
