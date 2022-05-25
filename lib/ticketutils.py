@@ -27,6 +27,8 @@ class TicketUtils:
       - auto_archive : 自動チケットアーカイブ, int
       - auto_delete : 自動チケット削除, int
       - mention_created : チケット作成時にメンションするか, int
+      - panel_title : パネルのタイトル
+      - panel_description : パネルの説明
 
     - ticketpanels : チケットパネルの情報
       - panel_id : パネルのID, プライマリキー, int
@@ -106,6 +108,19 @@ class TicketUtils:
                     reason=f"Ticket Channel created by {author_id}"
                 )
                 return channel
+
+    #get_panel_info
+    async def get_panel_info(self, guild_id: int) -> str:
+        db = await self.bot.db.fetchone(
+            "SELECT * FROM ticketconfig WHERE guild_id=%s",
+            (guild_id,)
+        )
+        val = [None, None]
+
+        if db:
+            val[0] = db["panel_title"]
+            val[1] = db["panel_description"]
+        return val
 
     #create_panel
     async def create_panel(
