@@ -30,6 +30,10 @@ class TicketUtils:
       - panel_title : パネルのタイトル
       - panel_description : パネルの説明
 
+    - mentionable_roles : メンションするロール
+      - guild_id : ギルドID, プライマリキー, int
+      - role_id : ロールID, int
+
     - ticketpanels : チケットパネルの情報
       - panel_id : パネルのID, プライマリキー, int
       - guild_id : ギルドID, int
@@ -58,6 +62,21 @@ class TicketUtils:
             embed.add_field(name="ステータス / Status", value="```\nクローズ / Close \n```", inline=False)
             embed.add_field(name="作成理由 / Reason", value=f"```\n*** クローズ / Closed *** \n```", inline=False)
         return embed
+
+    #get_mentionable_roles
+    async def get_mentionable_roles(self, guild_id: int) -> discord.Role:
+        db = await self.bot.db.fetchall(
+            "SELECT * FROM mentionable_roles WHERE guild_id=%s",
+            (guild_id,)
+        )
+        guild = self.bot.get_guild(guild_id)
+        if db:
+            l = list()
+            for i in db:
+                role = guild.get_role(i["role_id"])
+                if role:
+                    l.append(role)
+            return l
 
     #crate_ticket_channel
     async def create_ticket_channel(
@@ -203,8 +222,9 @@ class TicketUtils:
     async def init_database(self) -> None:
         query = [
             "CREATE TABLE IF NOT EXISTS tickets(ticket_id BIGINT PRIMARY KEY NOT NULL, ticket_panel_id BIGINT, guild_id BIGINT, author_id BIGINT, created_at TEXT, status INTEGER)",
-            "CREATE TABLE IF NOT EXISTS ticketconfig(guild_id BIGINT PRIMARY KEY NOT NULL, open_category_id BIGINT, close_category_id BIGINT, auto_archive INTEGER, auto_delete INTEGER, mention_created INTEGER)",
-            "CREATE TABLE IF NOT EXISTS ticketpanels(panel_id BIGINT PRIMARY KEY NOT NULL, guild_id BIGINT, channel_id BIGINT, created_at TEXT)"
+            "CREATE TABLE IF NOT EXISTS ticketconfig(guild_id BIGINT PRIMARY KEY NOT NULL, open_category_id BIGINT, close_category_id BIGINT, auto_archive INTEGER, auto_delete INTEGER, mention_created INTEGER, panel_title TEXT, panel_description TEXT)",
+            "CREATE TABLE IF NOT EXISTS ticketpanels(panel_id BIGINT PRIMARY KEY NOT NULL, guild_id BIGINT, channel_id BIGINT, created_at TEXT)",
+            "CREATE TABLE IF NOT EXISTS mentionable_roles(role_id BIGINT PRIMARY KEY NOT NULL, role_id BIGINT)"
         ]
 
         for i in query:
