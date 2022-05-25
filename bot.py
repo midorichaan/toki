@@ -10,7 +10,7 @@ import traceback
 
 from logging import basicConfig, getLogger, INFO
 from dotenv import load_dotenv
-from lib import utils
+from lib import utils, database
 
 #logger
 basicConfig(
@@ -29,6 +29,7 @@ class TokiHanasaki(commands.Bot):
         self.owner_ids = [546682137240403984, 780033257046802453, 385746925040828418, 352395944139948033]
         self.owner_id = None
         self.logger = getLogger("discord")
+        self.db = database.Database()
         self._cogs = [
             "cogs.mido_mcs", "cogs.mido_admins", "jishaku"
         ]
