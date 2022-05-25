@@ -57,6 +57,56 @@ class TicketUtils:
             embed.add_field(name="作成理由 / Reason", value=f"```\n*** クローズ / Closed *** \n```", inline=False)
         return embed
 
+    #crate_ticket_channel
+    async def create_ticket_channel(
+        self, guild_id: int, author_id: int
+    ) -> discord.TextChannel:
+        guild = self.bot.get_guild(guild_id)
+        db = await self.bot.db.fetchone(
+            "SELECT * FROM ticketconfig WHERE guild_id=%s",
+            (guild_id,)
+        )
+        ow = {
+            guild.default_role: discord.PermissionOverwrite(
+                read_messages=False,
+                send_messages=False,
+                read_message_history=False
+            ),
+            guild.me: discord.PermissionOverwrite(
+                read_messages=True,
+                send_messages=True,
+                read_message_history=True,
+                manage_channels=True,
+                add_reactions=True,
+                manage_messages=True,
+                embed_links=True,
+                attach_files=True,
+                external_emojis=True,
+                manage_permissions=True,
+                external_stickers=True
+            ),
+            guild.get_member(author_id): discord.PermissionOverwrite(
+                read_messages=True,
+                send_messages=True,
+                read_message_history=True,
+                add_reactions=True,
+                embed_links=True,
+                attach_files=True,
+                external_emojis=True,
+                external_stickers=True
+            )
+        }
+
+        if db:
+            category = self.bot.get_channel(db["open_category_id"])
+            if category and isinstance(category, discord.CategoryChannel):
+                channel = await category.create_text_channel(
+                    f"ticket-{author_id}",
+                    overwrites=ow,
+                    reason=f"Ticket Channel created by {author_id}"
+                )
+                return channel
+
     #create_panel
     async def create_panel(
         self, channel: discord.TextChannel, title: str=None, description: str=None, color: int=None
