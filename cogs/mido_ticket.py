@@ -44,5 +44,14 @@ class mido_ticket(commands.Cog):
                 e.add_field(name=i.name, value=i.description or "説明なし")
         return await m.edit(content=None, embed=e)
 
+    #ticket create
+    @_ticket.command(
+        name="create",
+        description="チケットを作成します。",
+        usage="ticket create [reason]"
+    )
+    async def _create(self, ctx, *, reason: str=None):
+        m = await utils.reply_or_send(ctx, content="> 処理中...")
+
 async def setup(bot):
     await bot.add_cog(mido_ticket(bot))
