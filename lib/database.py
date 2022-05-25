@@ -1,12 +1,17 @@
+from dotenv import load_dotenv
 from functools import wraps
 from typing import Coroutine
 
 import aiomysql
+import os
+
+load_dotenv()
 
 class Database:
     def __init__(
-        self, *, host: str = None, port: int = None,
-            user: str = None, password: str = None, db: str = None) -> None:
+        self, *, host: str = os.environ.get("DB_HOST", None), port: int = os.environ.get("DB_PORT", 3306),
+            user: str = os.environ.get("DB_USER", None), password: str = os.environ.get("DB_PASSWD", None), db: str = os.environ.get("DB_DATABASE", None)
+    ) -> None:
         self.host: str = host
         self.port: int = port
         self.user: str = user
