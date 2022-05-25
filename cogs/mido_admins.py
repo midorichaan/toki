@@ -117,6 +117,23 @@ class mido_admins(commands.Cog):
             await ctx.message.add_reaction(self.failed)
             return await utils.reply_or_send(ctx, content=f"```py\n{exc}\n```")
 
+    #sql
+    @commands.is_owner()
+    @commands.command(name="sql", usage="sql <query>", description="SQL文を実行します。")
+    async def _sql(self, ctx, *, query: str=None):
+        if not query:
+            await ctx.message.add_reaction(self.failed)
+            return await utils.reply_or_send(ctx, content=f"> SQL文を入力してね！")
+
+        try:
+            ret = await self.bot.db.fetchall(query)
+        except Exception as exc:
+            await ctx.message.add_reaction(self.failed)
+            return await utils.reply_or_send(ctx, content=f"> SQL Result \n```py\n{exc}\n```")
+        else:
+            await ctx.message.add_reaction(self.success)
+            return await utils.reply_or_send(ctx, content=f"> SQL Result \n```py\n{ret}\n```")
+
     #sync
     @commands.is_owner()
     @commands.command(name="sync", usage="sync", description="GitHub上のコードと同期します")
