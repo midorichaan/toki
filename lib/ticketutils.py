@@ -146,7 +146,19 @@ class TicketUtils:
         self, channel: discord.TextChannel, title: str=None, description: str=None, color: int=None
     ) -> discord.Message:
         embed = self.create_ticket_panel(title, description, color)
-        msg = await channel.send(embed=embed)
+        mention = await self.get_mentionable_roles(channel.guild.id)
+        config = await self.bot.db.fetchone(
+            "SELECT * FROM ticketconfig WHERE guild_id=%s",
+            (channel.guild.id,)
+        )
+        mentionable = None
+
+        if config:
+            if config["mention_created"] == 1:
+                mentionable = "@everyone"
+            if config["mention_created"] == 2:
+                mentionable = " ".join([i.mention for i in mention])
+        msg = await channel.send(content=mentionable, embed=embed)
 
         await self.bot.execute(
             "INSERT INTO ticketpanels VALUES(%s, %s, %s, %s)",
