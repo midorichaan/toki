@@ -9,6 +9,19 @@ class mido_ticket(commands.Cog):
         self.bot = bot
         self.ticketutil = ticketutils.TicketUtils(bot)
 
+    #_check_permission
+    def _chech_permission(self, member: discord.Member) -> bool:
+        perms = dict(member.guild_permissions)
+        val = True
+
+        if not perms.manage_channels:
+            val = False
+        if not perms.manage_messages:
+            val = False
+        if not perms.manage_permissions:
+            val = False
+        return val
+
     #ticket
     @commands.group(
         name="ticket",
@@ -52,6 +65,31 @@ class mido_ticket(commands.Cog):
     )
     async def _create(self, ctx, *, reason: str=None):
         m = await utils.reply_or_send(ctx, content="> 処理中...")
+
+        cp = self._check_permission(ctx.guild.me)
+        if not cp:
+            return await m.edit(content="> Botの権限が不足しているよ！")
+
+        try:
+            channel = await self.ticketutil.create_ticket_channel(
+                ctx.guild.id, ctx.author.id
+            )
+            await self.ticketutil.create_ticket(
+                channel, panel[0], panel[1]
+            )
+        except Exception as exc:
+            if ctx.author.id in self.bot.owner_ids:
+                return await m.edit(
+                    content=f"> エラー \n```py\n{exc}\n```"
+                )
+            else:
+                return await m.edit(
+                    content="> チケット作成中にエラーが発生しました。"
+                )
+        else:
+            return await m.edit(
+                content=f"> チケットを作成しました！ \n→ {channel.mention}"
+            )
 
 async def setup(bot):
     await bot.add_cog(mido_ticket(bot))
