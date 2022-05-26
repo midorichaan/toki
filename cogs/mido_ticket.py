@@ -91,5 +91,27 @@ class mido_ticket(commands.Cog):
                 content=f"> チケットを作成しました！ \n→ {channel.mention}"
             )
 
+    #ticket panel
+    @_ticket.group(
+        name="panel",
+        description="チケットパネル関連のコマンドです",
+        usage="ticket panel <args>"
+    )
+    async def _panel(self, ctx):
+        if ctx.invoke_subcommand is None:
+            return await utils.reply_or_send(ctx, content="> `.ticket help` でヘルプを参照してね！")
+
+    #ticket panel create
+    @_panel.command(
+        name="create",
+        description="チケットパネルを作成します",
+        usage="ticket panel create [channel]"
+    )
+    async def _create_panel(self, ctx, channel: discord.TextChannel=None):
+        m = await utils.reply_or_send(ctx, content="> 処理中...")
+
+        if not channel:
+            channel = ctx.channel
+
 async def setup(bot):
     await bot.add_cog(mido_ticket(bot))
