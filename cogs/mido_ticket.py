@@ -114,5 +114,8 @@ class mido_ticket(commands.Cog):
         if not channel:
             channel = ctx.channel
 
+        try:
+            
+
 async def setup(bot):
     await bot.add_cog(mido_ticket(bot))
