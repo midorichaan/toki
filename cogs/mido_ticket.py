@@ -74,6 +74,7 @@ class mido_ticket(commands.Cog):
             channel = await self.ticketutil.create_ticket_channel(
                 ctx.guild.id, ctx.author.id
             )
+            panel = await self.ticketutil.get_panel_info(ctx.guild.id)
             await self.ticketutil.create_ticket(
                 channel, panel[0], panel[1]
             )
